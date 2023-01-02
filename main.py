@@ -20,6 +20,7 @@ ZILLOW_LINK = "https://www.zillow.com/san-francisco-ca/rentals/?searchQueryState
              "22value%22%3Afalse%7D%7D%2C%22isListVisible%22%3Atrue%2C%22regionSelection%22%3A%5B%7B%22region" \
              "Id%22%3A20330%2C%22regionType%22%3A6%7D%5D%7D"
 
+# Create a google form and copy the link
 GOOGLE_FORM_URL = os.getenv("FORM_URL")
 
 HEADER = {
@@ -42,6 +43,7 @@ def get_html_page():
 
 # Populate answers into google form
 def fill_in_form(address_input, price_input, link_input):
+    # This is the path where the chrome driver is located.
     chrome_driver_path = r"C:\Users\Mary\chromedriver_win32\chromedriver.exe"
 
     service = Service(chrome_driver_path)
