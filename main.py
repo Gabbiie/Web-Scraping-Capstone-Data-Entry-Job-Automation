@@ -9,6 +9,7 @@ import os
 
 load_dotenv(".env")
 
+# Zillow website URL
 ZILLOW_LINK = "https://www.zillow.com/san-francisco-ca/rentals/?searchQueryState=%7B%22pagination%22%3A%7B%7D%2C" \
              "%22mapBounds%22%3A%7B%22north%22%3A37.84608530611633%2C%22east%22%3A-122.32758609179687%2C%22south%22" \
              "%3A37.70443074814723%2C%22west%22%3A-122.53907290820312%7D%2C%22mapZoom%22%3A12%2C%22isMapVisible%22" \
@@ -23,6 +24,7 @@ ZILLOW_LINK = "https://www.zillow.com/san-francisco-ca/rentals/?searchQueryState
 # Create a google form and copy the link
 GOOGLE_FORM_URL = os.getenv("FORM_URL")
 
+# Pass in your User-agent and Accepted languages from myhttpheader.com.
 HEADER = {
     "Accept-Language": "en-ZA,en-GB;q=0.9,en-US;q=0.8,en;q=0.7",
     "User-Agent": "Mozilla/5.0 (Windows NT 11  0.0; Win64; x64) AppleWebKit/537.36"
@@ -45,14 +47,15 @@ def get_html_page():
 def fill_in_form(address_input, price_input, link_input):
     # This is the path where the chrome driver is located.
     chrome_driver_path = r"C:\Users\Mary\chromedriver_win32\chromedriver.exe"
-
+    
+    # Set up the webdriver
     service = Service(chrome_driver_path)
     driver = webdriver.Chrome(service=service)
 
     driver.get(GOOGLE_FORM_URL)
     time.sleep(10)
 
-    # Find all input fields and the submit button, enter the answers and submit them.
+    # Find all input fields and the submit button (by the Xpath).
     address_answer = driver.find_element(By.XPATH, '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[1]/div/div/div[2]/'
                                                    'div/div[1]/div/div[1]/input')
     price_answer = driver.find_element(By.XPATH, '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[2]/div/div/div[2]/div/div[1]'
@@ -60,12 +63,14 @@ def fill_in_form(address_input, price_input, link_input):
     link_answer = driver.find_element(By.XPATH, '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[3]/div/div/div[2]/div/'
                                                 'div[1]/div/div[1]/input')
     submit_button = driver.find_element(By.XPATH, '//*[@id="mG61Hd"]/div[2]/div/div[3]/div[1]/div[1]/div/span/span')
-
+    
+    #Populate the input fields and submit the answers.
     address_answer.send_keys(address_input)
     price_answer.send_keys(price_input)
     link_answer.send_keys(link_input)
     submit_button.click()
 
+    # Click on the submit another form link instead of loading a new form.
     # submit_another_form = driver.find_element(By.XPATH, '/html/body/div[1]/div[2]/div[1]/div/div[4]/a')
     # submit_another_form.click()
 
@@ -73,7 +78,10 @@ def fill_in_form(address_input, price_input, link_input):
 
 
 soup = get_html_page()
+
+# Get property listings using a different selector.
 # property_listings = soup.select(selector="ul .with_constellation")
+
 # Find the relevant tags containing the property listing info
 address_tags = soup.select(selector="a address")
 price_tags = soup.select(selector="div .hRqIYX span")
@@ -92,6 +100,7 @@ formatted_addresses = []
 formatted_prices = []
 formatted_links = []
 
+# Format each property listing
 for n in range(0, len(addresses_list)):
     address = addresses_list[n]
     property_price = prices_list[n]
